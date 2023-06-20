@@ -11,7 +11,7 @@ const enquiriesSchema = new mongoose.Schema(
       require: true,
       trim: true,
     },
-    Email: {
+    email: {
       type: String,
       require: true,
       trim: true,
