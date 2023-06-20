@@ -6,8 +6,8 @@ const enquiryRequest = async (req, res) => {
     let data = req.body;
 
     moment.tz.setDefault("Asia/Kolkata");
-    let dates = moment().format("DD-MM-YYYY");
-    let times = moment().format("HH:mm:ss");
+    let dates = moment().format("YYYY-MM-DD");//2023-06-11
+    let times = moment().format("HH:mm:ss");//
     data.date = dates;
     data.time = times;
     let savedata = await enquiryModel.create(data);

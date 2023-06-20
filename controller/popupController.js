@@ -6,7 +6,7 @@ const popup = async (req, res) => {
         let data = req.body;
            
     moment.tz.setDefault("Asia/Kolkata");
-    let dates = moment().format("DD-MM-YYYY");
+    let dates = moment().format("YYYY-MM-DD");
     let times = moment().format("HH:mm:ss");
     data.date = dates;
     data.time = times;
