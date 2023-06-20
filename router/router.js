@@ -13,12 +13,12 @@ router.post("/login",login)
 
   //==============================================================
   router.post("/popup",popup)
-router.get("/getPopups",authentication,getPopups)
-router.get("/sortPopup",authentication,sortPopup)
-router.get("/dupilicatepopups",authentication,dupilicatepopups)
+router.get("/getPopups",getPopups)
+router.get("/sortPopup",sortPopup)
+router.get("/dupilicatepopups",dupilicatepopups)
 //==================================================================
 router.post("/enquiryRequest",enquiryRequest)
-router.get("/getenquiries",authentication,getenquiries)
- router.get("/sortenquiries",authentication, sortenquiries)
- router.get("/dupilicateEnquiries",authentication,dupilicateEnquiries)
+router.get("/getenquiries",getenquiries)
+ router.get("/sortenquiries", sortenquiries)
+ router.get("/dupilicateEnquiries",dupilicateEnquiries)
 module.exports = router 
