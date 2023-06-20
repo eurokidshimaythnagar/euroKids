@@ -1,6 +1,6 @@
 const mongoose = require("mongoose")
 const popupSchema = new mongoose.Schema({
-    phone:{
+    mobile:{
     type:String,
     require:true,
     trim:true
