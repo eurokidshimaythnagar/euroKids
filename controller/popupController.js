@@ -34,7 +34,7 @@ const getPopups = async (req, res) => {
           const filterDate = filter.date;
           data = await popupModel.aggregate([
             { $match: { isDeleted: false, date: filterDate } },
-            { $group: { _id: "$phone", doc: { $first: "$$ROOT" } } },
+            { $group: { _id: "$mobile", doc: { $first: "$$ROOT" } } },
             { $replaceRoot: { newRoot: "$doc" } },
             { $sort: { createdAt: -1 } },
           ]);
