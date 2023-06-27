@@ -75,13 +75,41 @@ const dupilicateEnquiries = async (req, res) => {
     const repeatedPhoneNumbers = await enquiryModel.aggregate([
       {
         $group: {
-          _id: "$mobile",
-          docs: { $push: "$$ROOT" },
-          count: { $sum: 1 },
+          _id: {
+            date: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+            mobile: "$mobile"
+          },
+          count: { $sum: {
+            $cond: [
+              { $gt: [
+                { $subtract: [ new Date(), "$createdAt" ] },
+                60000 // 1 minute in milliseconds
+              ] },
+              1,
+              0
+            ]
+          } },
+          createdAt: { $first: "$createdAt" }
         },
       },
-      { $match: { count: { $gt: 1 } } },
-      { $project: { count: 1, docs: 1, _id: 0, phoneNumber: "$_id" } },
+      {
+        $match: {
+          count: { $gt: 1 }
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          date: "$_id.date",
+          phoneNumber: "$_id.mobile",
+          count: "$count",
+        },
+      },
+      {
+        $sort: {
+          date: -1 // Sort in descending order
+        }
+      }
     ]);
 
     return res.status(200).send({ status: true, data: repeatedPhoneNumbers });
@@ -89,6 +117,8 @@ const dupilicateEnquiries = async (req, res) => {
     return res.status(500).send({ status: false, message: error.message });
   }
 };
+
+
 
 module.exports = {
   enquiryRequest,
