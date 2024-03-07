@@ -42,7 +42,7 @@ const register = async (req, res) => {
         // > Create Jwt Token 
         const token = jwt.sign(
             { customerID: isEmailExists._id.toString() },
-            "verysecret assignment test",
+            process.env.Secret,
             { expiresIn: '24h' }
         )
         //  Make Respoense
