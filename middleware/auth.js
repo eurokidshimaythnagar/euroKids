@@ -1,12 +1,14 @@
 const jwt = require('jsonwebtoken')
 
+const dotenv = require('dotenv'); // Import dotenv
+dotenv.config(); 
 const authentication = async function (req, res, next) {
     try {
         let token = req.headers["authorization"]
         if (!token) { return res.status(401).send({ msg: "required token " }) }
         let splittoken = token.split(' ') //converting into array
         // decoding token  
-        jwt.verify(splittoken[1], "verysecret assignment test"
+        jwt.verify(splittoken[1], process.env.Secret
             , (err, decoded) => {
                 if (err) {
                     return res

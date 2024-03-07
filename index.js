@@ -1,7 +1,9 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const route = require("./router/router");
+const dotenv = require('dotenv'); // Import dotenv
 
+dotenv.config(); // Load environment variables from .env file
 const app = express();
 //const multer= require("multer");
 
@@ -12,7 +14,7 @@ app.use(cors());
 
 mongoose
   .connect(
-    "mongodb+srv://broaddcast-arena:niGWGzHNuZHyyMnN@cluster0.w7swjdn.mongodb.net/euroKids",
+    process.env.cluster,
     {
       useNewUrlParser: true,
     }

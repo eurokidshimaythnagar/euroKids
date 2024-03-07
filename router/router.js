@@ -1,6 +1,6 @@
 const express = require("express")
 const router = express.Router()
-const {popup , getPopups , sortPopup , dupilicatepopups}= require("../controller/popupController")
+const {popup ,getpopup }= require("../controller/popupController")
 const {enquiryRequest, getenquiries , sortenquiries ,dupilicateEnquiries } =require("../controller/enquirycontroller")
 const {register , login}=require("../controller/userController")
 const {authentication}=require("../middleware/auth")
@@ -13,9 +13,9 @@ router.post("/login",login)
 
   //==============================================================
   router.post("/popup",popup)
-router.get("/getPopups",getPopups)
-router.get("/sortPopup",sortPopup)
-router.get("/dupilicatepopups",dupilicatepopups)
+router.get("/getPopups",getpopup)
+// router.get("/sortPopup",sortPopup)
+// router.get("/dupilicatepopups",dupilicatepopups)
 //==================================================================
 router.post("/enquiryRequest",enquiryRequest)
 router.get("/getenquiries",getenquiries)

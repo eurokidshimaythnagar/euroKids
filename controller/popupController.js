@@ -1,6 +1,8 @@
 const popupModel = require("../model/popupModel");
 const moment = require("moment")
 require("moment-timezone")
+
+
 const popup = async (req, res) => {
     try {
         let data = req.body;
@@ -19,68 +21,135 @@ const popup = async (req, res) => {
  
 };
 //===============================================================
-const getPopups = async (req, res) => {
-    try {
-        const filter = req.query;
-        const sortOptions = {}; 
-        let data = [];
-    
-        if (Object.keys(filter).length === 0) {
-          // No query parameters provided
-          sortOptions.createdAt = -1;
-          const data = await popupModel.find({isDeleted:false}).sort(sortOptions);
-          return res.status(200).send({ status: true, data: data });
-        } else {
-          const filterDate = filter.date;
-          data = await popupModel.aggregate([
-            { $match: { isDeleted: false, date: filterDate } },
-            { $group: { _id: "$mobile", doc: { $first: "$$ROOT" } } },
-            { $replaceRoot: { newRoot: "$doc" } },
-            { $sort: { createdAt: -1 } },
-          ]);
-        }
-    
-        return res.status(200).send({ status: true, data: data });
-      } catch (error) {
-        return res.status(500).send({ status: false, message: error.message });
-      }
-};
-//==============================================================================
-const sortPopup = async (req, res) => {
+
+
+let getpopup = async (req,res)=>{
+  res.setHeader("Access-Control-Allow-Origin", "*");
   try {
     const filter = req.query;
-    const sortOptions = {}; 
- 
-    if (Object.keys(filter).length === 0) {
-      // No query parameters provided, sort by createdAt in descending order
-      sortOptions.createdAt = -1;
-      const data = await popupModel.find({isDeleted:false}).sort(sortOptions);
-      return res.status(200).send({ status: true, data: data });
-    } else {
-      // Sort by the provided filter parameters
-      const data = await popupModel.find({isDeleted:false}).sort(filter);
-      return res.status(200).send({ status: true, data: data });
-    }
-  } catch (error) {
-    return res.send({ status: false, message: error.message });
-  }
-  
-  
-};
-//=================================================================
+    const sortOptions = {};
+    let data = [];
 
-const dupilicatepopups = async (req, res) => {
+    if (Object.keys(filter).length === 0) {
+      // No query parameters provided
+      sortOptions.createdAt = -1;
+      data = await popupModel
+        .find({
+          isDeleted: false,
+        })
+        .sort(sortOptions);
+    } else {
+      const filterDate = filter.date;
+      // const formattedDate = moment(filterDate, "DD/MM/YYYY").format("MM/DD/YYYY");
+      data = await popupModel.aggregate([
+        {
+          $match: {
+            isDeleted: false,
+            date: filterDate,
+          },
+        },
+        { $group: { _id: "$Phone", doc: { $first: "$$ROOT" } } },
+        { $replaceRoot: { newRoot: "$doc" } },
+        // { $sort: { createdAt: -1 } },
+      ]);
+    }
+return res.status(200).send({status:true,data:data})
+  } catch (error) {
+    res.status(500).send({ status: false, message: error.message });
+  }
+}
+//============================================================================
+const dupePopups =async (req,res)=>{
+  res.setHeader("Access-Control-Allow-Origin", "*");
   try {
     const repeatedPhoneNumbers = await popupModel.aggregate([
-      { $group: { _id: "$phone",  docs: { $push: "$$ROOT" } ,count: { $sum: 1 },} },
+      {
+        $group: {
+          _id: {
+            number: "$phone",
+            date: "$date",
+          },
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          _id: 0, // Exclude _id from the result
+          number: "$_id.number",
+          date: "$_id.date",
+          count: 1,
+        },
+      },
       { $match: { count: { $gt: 1 } } },
-      { $project: { count: 1, docs: 1 , _id: 0, phoneNumber: "$_id", } }
     ]);
 
     return res.status(200).send({ status: true, data: repeatedPhoneNumbers });
+  } catch (error) {
+    
+  }
+}
+//===========================================================================================
+const popupsUniqueEntries = async (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  try {
+    let  data = await serviceModel.aggregate([
+      { $match: { isDeleted: false } },
+      {
+        $group: {
+          _id: {
+            date: "$date",
+            Phone: "$phone",
+           
+          },
+          doc: { $first: "$$ROOT" },
+        },
+      },
+      { $replaceRoot: { newRoot: "$doc" } },
+      { $sort: { createdAt: -1 } },
+    ]);
+    return res.status(200).send({ status: true, data: data });
+  } catch (error) {
+    return res.status(500).send({ status: false, message: error.message });
+  }
+};
+//=========================================================================================
+const popupRangeData = async (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  try {
+    const { startDate, endDate } = req.body; // Assuming startDate and endDate are provided in the request body
+
+    let data = await serviceModel.aggregate([
+      {
+        $match: {
+          isDeleted: false,
+          $expr: {
+            $and: [
+              { $gte: ["$date", startDate] },
+              { $lte: ["$date", endDate] }
+            ]
+          }
+        }
+      },
+      {
+        $group: {
+          _id: {
+            date: "$date",
+            Phone: "$phone",
+            
+          },
+          doc: { $first: "$$ROOT" },
+        },
+      },
+      { $replaceRoot: { newRoot: "$doc" } },
+      { $sort: { createdAt: -1 } },
+    ]);
+
+    return res.status(200).send({ status: true, data: data });
   } catch (error) {
     return res.status(500).send({ status: false, message: error.message });
   }
 };
 
-module.exports = { popup , getPopups , sortPopup , dupilicatepopups};
+module.exports ={popup ,getpopup ,
+    //  dupePopups ,popupsUniqueEntries , popupRangeData
+}
