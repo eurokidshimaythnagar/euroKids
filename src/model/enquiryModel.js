@@ -13,7 +13,7 @@ const enquiriesSchema = new mongoose.Schema(
     },
     email: {
       type: String,
-      require: true,
+      // require: true,
       trim: true,
     },
     program:{
