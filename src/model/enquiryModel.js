@@ -18,7 +18,7 @@ const enquiriesSchema = new mongoose.Schema(
     },
     program:{
         type:String,
-        enum:["Playgroup","Nursery","EuroJunior","EuroSenior"]
+        // enum:["Playgroup","Nursery","EuroJunior","EuroSenior"]
     },
     date: {
       type: String,
